@@ -23,12 +23,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Get branding settings
+    // Get branding settings (use maybeSingle to handle case where row doesn't exist)
     const { data: settings, error } = await supabase
       .from('site_settings')
       .select('value')
       .eq('key', 'branding')
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching branding settings:', error);
@@ -80,14 +80,16 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid favicon_url' }, { status: 400 });
     }
 
-    // Update branding settings
+    // Upsert branding settings (insert if not exists, update if exists)
     const { data, error } = await supabase
       .from('site_settings')
-      .update({
+      .upsert({
+        key: 'branding',
         value: { logo_url, favicon_url },
         updated_at: new Date().toISOString(),
+      }, {
+        onConflict: 'key',
       })
-      .eq('key', 'branding')
       .select()
       .single();
 
