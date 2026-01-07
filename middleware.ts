@@ -25,11 +25,23 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
+    // Check if Supabase env vars are available
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      // If env vars not available, redirect to login (will show error there)
+      console.error('Supabase environment variables not configured');
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('error', 'config');
+      return NextResponse.redirect(loginUrl);
+    }
+
     // Create Supabase client for auth check
     const response = NextResponse.next();
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      supabaseAnonKey,
       {
         cookies: {
           get(name: string) {
@@ -45,28 +57,35 @@ export async function middleware(request: NextRequest) {
       }
     );
 
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
+      if (!user) {
+        const loginUrl = new URL('/admin/login', request.url);
+        loginUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      // Check if user is admin
+      const { data: adminUser } = await supabase
+        .from('admin_users')
+        .select('id, role')
+        .eq('id', user.id)
+        .single();
+
+      if (!adminUser) {
+        const loginUrl = new URL('/admin/login', request.url);
+        loginUrl.searchParams.set('error', 'unauthorized');
+        return NextResponse.redirect(loginUrl);
+      }
+
+      return response;
+    } catch (error) {
+      console.error('Middleware auth error:', error);
       const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
+      loginUrl.searchParams.set('error', 'auth_error');
       return NextResponse.redirect(loginUrl);
     }
-
-    // Check if user is admin
-    const { data: adminUser } = await supabase
-      .from('admin_users')
-      .select('id, role')
-      .eq('id', user.id)
-      .single();
-
-    if (!adminUser) {
-      const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('error', 'unauthorized');
-      return NextResponse.redirect(loginUrl);
-    }
-
-    return response;
   }
 
   // Check if pathname already has language prefix
