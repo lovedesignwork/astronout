@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { revalidateTag } from 'next/cache';
 
 // GET /api/admin/settings/branding - Get branding settings
 export async function GET() {
@@ -97,6 +98,9 @@ export async function PUT(request: NextRequest) {
       console.error('Error updating branding settings:', error);
       return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
     }
+
+    // Revalidate the branding cache so changes appear immediately
+    revalidateTag('branding');
 
     return NextResponse.json({
       success: true,

@@ -82,7 +82,11 @@ const navItems = [
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  logoUrl?: string | null;
+}
+
+export function AdminSidebar({ logoUrl }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
@@ -113,12 +117,24 @@ export function AdminSidebar() {
     <aside className={`flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
       {/* Logo Header */}
       <div className={`flex h-16 items-center border-b border-gray-200 ${isCollapsed ? 'justify-center px-2' : 'gap-3 px-5'}`}>
-        <div className="flex size-9 items-center justify-center rounded-lg bg-gray-900 shrink-0">
-          <svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-          </svg>
-        </div>
-        {!isCollapsed && <h1 className="text-gray-900" style={{ fontSize: '40px', fontWeight: 400, fontFamily: 'Outfit' }}>Astronout</h1>}
+        {logoUrl ? (
+          <Link href="/admin" className="flex items-center gap-3">
+            <img 
+              src={logoUrl} 
+              alt="Logo" 
+              className={`object-contain ${isCollapsed ? 'h-8 w-8' : 'h-10 w-auto max-w-[180px]'}`}
+            />
+          </Link>
+        ) : (
+          <>
+            <div className="flex size-9 items-center justify-center rounded-lg bg-gray-900 shrink-0">
+              <svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+              </svg>
+            </div>
+            {!isCollapsed && <h1 className="text-gray-900" style={{ fontSize: '40px', fontWeight: 400, fontFamily: 'Outfit' }}>Astronout</h1>}
+          </>
+        )}
       </div>
 
       {/* Navigation */}

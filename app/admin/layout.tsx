@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { FlyonUIScript } from '@/components/FlyonUIScript';
 import { Outfit } from 'next/font/google';
+import { getBrandingSettings } from '@/lib/data/settings';
 
 // Configure Outfit font from Google Fonts
 // https://fonts.google.com/specimen/Outfit
@@ -38,11 +39,14 @@ export default async function AdminLayout({
     redirect('/mylogin?error=unauthorized');
   }
 
+  // Fetch branding settings for the sidebar logo
+  const branding = await getBrandingSettings();
+
   return (
     <html lang="en" data-theme="light" className={`bg-base-100 ${outfit.variable}`}>
       <body className={`${outfit.className} antialiased bg-base-100 min-h-screen text-base-content`}>
         <div className="flex min-h-screen">
-          <AdminSidebar />
+          <AdminSidebar logoUrl={branding.logo_url} />
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Top Header Bar */}
             <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0 shadow-sm">
