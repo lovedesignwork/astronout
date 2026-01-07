@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { GoogleAnalytics } from '@/components/tracking/GoogleAnalytics';
 
 export const metadata: Metadata = {
   title: {
@@ -37,12 +36,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <GoogleAnalytics />
-        {children}
-      </body>
-    </html>
-  );
+  return children;
 }

@@ -6,6 +6,9 @@ import { getActiveStripeKeys } from '@/lib/data/settings';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendAllBookingEmails } from '@/lib/email';
 
+// Force Node.js runtime for this route (required for @react-email/components)
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();

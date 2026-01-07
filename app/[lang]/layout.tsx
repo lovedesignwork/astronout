@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer';
 import { LanguageProvider } from '@/lib/contexts/LanguageContext';
 import { WishlistProvider } from '@/lib/contexts/WishlistContext';
 import { VisitorTracker } from '@/components/tracking/VisitorTracker';
+import { GoogleAnalytics } from '@/components/tracking/GoogleAnalytics';
 import { Language, SUPPORTED_LANGUAGES, LANGUAGE_NAMES } from '@/types';
 import { getBrandingSettings } from '@/lib/data/settings';
 
@@ -75,6 +76,7 @@ export default async function LangLayout({ children, params }: LayoutProps) {
         )}
       </head>
       <body className={`${outfit.className} antialiased`}>
+        <GoogleAnalytics />
         <LanguageProvider initialLang={language}>
           <WishlistProvider>
             <VisitorTracker />
