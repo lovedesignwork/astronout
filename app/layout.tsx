@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://astronout.co';
+
 export const metadata: Metadata = {
   title: {
     default: 'Astronout - Tour Booking Platform',
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(siteUrl),
   openGraph: {
     type: 'website',
     locale: 'en_US',
