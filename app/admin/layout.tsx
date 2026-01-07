@@ -21,17 +21,21 @@ export default async function AdminLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Check if user is authenticated and is admin
-  if (user) {
-    const { data: adminUser } = await supabase
-      .from('admin_users')
-      .select('id, role')
-      .eq('id', user.id)
-      .single();
+  // SECURITY: Redirect to login if no user is authenticated
+  if (!user) {
+    redirect('/mylogin');
+  }
 
-    if (!adminUser) {
-      redirect('/mylogin?error=unauthorized');
-    }
+  // Check if authenticated user is an admin
+  const { data: adminUser } = await supabase
+    .from('admin_users')
+    .select('id, role')
+    .eq('id', user.id)
+    .single();
+
+  // SECURITY: Redirect if user is not an admin
+  if (!adminUser) {
+    redirect('/mylogin?error=unauthorized');
   }
 
   return (
