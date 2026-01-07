@@ -6,12 +6,14 @@ import { CategoriesSubHeader } from './CategoriesSubHeader';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/lib/contexts/LanguageContext';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
+import type { TourCategory } from '@/types';
 
 interface HeaderProps {
   logoUrl?: string | null;
+  categories?: TourCategory[];
 }
 
-export function Header({ logoUrl }: HeaderProps = {}) {
+export function Header({ logoUrl, categories = [] }: HeaderProps) {
   const { language } = useLanguage();
   const { wishlistCount } = useWishlist();
 
@@ -110,7 +112,7 @@ export function Header({ logoUrl }: HeaderProps = {}) {
         </div>
       </Container>
       </div>
-      <CategoriesSubHeader />
+      <CategoriesSubHeader categories={categories} />
     </header>
   );
 }

@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import { createPublicClient, createClient } from '@/lib/supabase/server';
 import type { StripeSettings, StripePaymentMethods } from '@/types';
 
@@ -20,10 +21,9 @@ export interface ContactSettings {
 export type { StripeSettings, StripePaymentMethods };
 
 /**
- * Get branding settings (logo and favicon)
- * Uses public client to support static generation
+ * Internal function to fetch branding settings from database
  */
-export async function getBrandingSettings(): Promise<BrandingSettings> {
+async function fetchBrandingSettings(): Promise<BrandingSettings> {
   const defaultSettings = { logo_url: null, favicon_url: null };
   
   try {
@@ -50,6 +50,16 @@ export async function getBrandingSettings(): Promise<BrandingSettings> {
     return defaultSettings;
   }
 }
+
+/**
+ * Get branding settings (logo and favicon) with caching
+ * Cached for 5 minutes to avoid database calls on every page load
+ */
+export const getBrandingSettings = unstable_cache(
+  fetchBrandingSettings,
+  ['branding-settings'],
+  { revalidate: 300, tags: ['branding'] }
+);
 
 /**
  * Get general site settings

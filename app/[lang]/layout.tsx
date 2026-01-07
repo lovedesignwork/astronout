@@ -9,14 +9,16 @@ import { VisitorTracker } from '@/components/tracking/VisitorTracker';
 import { GoogleAnalytics } from '@/components/tracking/GoogleAnalytics';
 import { Language, SUPPORTED_LANGUAGES, LANGUAGE_NAMES } from '@/types';
 import { getBrandingSettings } from '@/lib/data/settings';
+import { getCategories } from '@/lib/data/tours';
 
 // Configure Outfit font from Google Fonts
 // https://fonts.google.com/specimen/Outfit
+// Only load essential weights to reduce font download size (~50% smaller)
 const outfit = Outfit({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-outfit',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700'],
 });
 
 interface LayoutProps {
@@ -61,8 +63,11 @@ export default async function LangLayout({ children, params }: LayoutProps) {
 
   const language = lang as Language;
   
-  // Fetch branding settings for logo and favicon
-  const branding = await getBrandingSettings();
+  // Fetch branding settings and categories in parallel (both are cached)
+  const [branding, categories] = await Promise.all([
+    getBrandingSettings(),
+    getCategories(),
+  ]);
 
   return (
     <html lang={language} className={outfit.variable}>
@@ -81,7 +86,7 @@ export default async function LangLayout({ children, params }: LayoutProps) {
           <WishlistProvider>
             <VisitorTracker />
             <div className="flex min-h-screen flex-col">
-              <Header logoUrl={branding.logo_url} />
+              <Header logoUrl={branding.logo_url} categories={categories} />
               <main className="flex-1">{children}</main>
               <Footer />
             </div>

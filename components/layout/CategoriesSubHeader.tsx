@@ -1,34 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { useLanguage } from '@/lib/contexts/LanguageContext';
-import { TourCategory } from '@/types';
+import type { TourCategory } from '@/types';
 
-export function CategoriesSubHeader() {
+interface CategoriesSubHeaderProps {
+  categories?: TourCategory[];
+}
+
+export function CategoriesSubHeader({ categories = [] }: CategoriesSubHeaderProps) {
   const { language } = useLanguage();
-  const [categories, setCategories] = useState<TourCategory[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await fetch('/api/categories');
-        const data = await response.json();
-        if (data.success) {
-          setCategories(data.categories);
-        }
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCategories();
-  }, []);
-
-  if (loading || categories.length === 0) {
+  if (categories.length === 0) {
     return null;
   }
 
@@ -51,4 +34,3 @@ export function CategoriesSubHeader() {
     </div>
   );
 }
-

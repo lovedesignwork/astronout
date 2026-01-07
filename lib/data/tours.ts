@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import { createPublicClient } from '@/lib/supabase/server';
 import { resolveTranslation } from '@/lib/i18n';
 import type {
@@ -15,6 +16,40 @@ import type {
   TourCategory,
   SpecialLabel,
 } from '@/types';
+
+/**
+ * Internal function to fetch all categories from database
+ */
+async function fetchCategories(): Promise<TourCategory[]> {
+  try {
+    const supabase = createPublicClient();
+
+    const { data: categories, error } = await supabase
+      .from('tour_categories')
+      .select('*')
+      .order('order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching categories:', error);
+      return [];
+    }
+
+    return (categories || []) as TourCategory[];
+  } catch (error) {
+    console.error('Error in fetchCategories:', error);
+    return [];
+  }
+}
+
+/**
+ * Get all tour categories with caching
+ * Cached for 5 minutes to avoid database calls on every page load
+ */
+export const getCategories = unstable_cache(
+  fetchCategories,
+  ['tour-categories'],
+  { revalidate: 300, tags: ['categories'] }
+);
 
 /**
  * Get a tour by slug with all blocks and translations
