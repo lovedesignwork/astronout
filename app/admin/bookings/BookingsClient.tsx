@@ -740,10 +740,10 @@ export function BookingsClient({ initialBookings, initialTotal, tours }: Booking
         isOpen={deleteDialogOpen}
         title="Delete Booking"
         message={`Are you sure you want to delete booking ${bookingToDelete?.reference}? This action cannot be undone.`}
-        confirmLabel="Delete"
-        confirmVariant="danger"
+        confirmText="Delete"
+        variant="danger"
         onConfirm={handleDeleteConfirm}
-        onCancel={() => {
+        onClose={() => {
           setDeleteDialogOpen(false);
           setBookingToDelete(null);
         }}
