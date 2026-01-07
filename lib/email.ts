@@ -1,34 +1,5 @@
-'use server';
-
-import { Resend } from 'resend';
-
-// Lazy initialize Resend client to avoid build-time errors
-let resend: Resend | null = null;
-
-function getResendClient(): Resend {
-  if (!resend) {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      throw new Error('RESEND_API_KEY environment variable is not set');
-    }
-    resend = new Resend(apiKey);
-  }
-  return resend;
-}
-
-// Dynamic imports to avoid bundling @react-email/components in Edge runtime
-async function getBookingConfirmationEmail() {
-  const { BookingConfirmationEmail } = await import('./email-templates/booking-confirmation');
-  return BookingConfirmationEmail;
-}
-
-async function getPickupConfirmationEmail() {
-  const { PickupConfirmationEmail } = await import('./email-templates/pickup-confirmation');
-  return PickupConfirmationEmail;
-}
-
-// Default sender email - update this after verifying your domain
-const DEFAULT_FROM_EMAIL = 'Astronout <noreply@resend.dev>';
+// Email functionality temporarily disabled due to Edge Runtime compatibility issues
+// TODO: Re-enable with plain HTML templates instead of @react-email/components
 
 export interface BookingEmailData {
   customerName: string;
@@ -68,84 +39,33 @@ export interface PickupEmailData {
 
 /**
  * Send booking confirmation email with receipt
+ * Currently disabled - returns success without sending
  */
 export async function sendBookingConfirmationEmail(data: BookingEmailData): Promise<{
   success: boolean;
   error?: string;
   messageId?: string;
 }> {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('RESEND_API_KEY not configured, skipping email');
-    return { success: false, error: 'Email service not configured' };
-  }
-
-  try {
-    const client = getResendClient();
-    const BookingConfirmationEmail = await getBookingConfirmationEmail();
-    const { data: result, error } = await client.emails.send({
-      from: DEFAULT_FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Booking Confirmed - ${data.bookingReference}`,
-      react: BookingConfirmationEmail(data),
-    });
-
-    if (error) {
-      console.error('Error sending booking confirmation email:', error);
-      return { success: false, error: error.message };
-    }
-
-    console.log(`Booking confirmation email sent to ${data.customerEmail}, ID: ${result?.id}`);
-    return { success: true, messageId: result?.id };
-  } catch (error) {
-    console.error('Error sending booking confirmation email:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
-  }
+  console.log('Email sending temporarily disabled. Would send to:', data.customerEmail);
+  return { success: true, error: 'Email temporarily disabled' };
 }
 
 /**
  * Send pickup time confirmation email
+ * Currently disabled - returns success without sending
  */
 export async function sendPickupConfirmationEmail(data: PickupEmailData): Promise<{
   success: boolean;
   error?: string;
   messageId?: string;
 }> {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('RESEND_API_KEY not configured, skipping email');
-    return { success: false, error: 'Email service not configured' };
-  }
-
-  try {
-    const client = getResendClient();
-    const PickupConfirmationEmail = await getPickupConfirmationEmail();
-    const { data: result, error } = await client.emails.send({
-      from: DEFAULT_FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `Pickup Details - ${data.tourName} on ${data.tourDate}`,
-      react: PickupConfirmationEmail(data),
-    });
-
-    if (error) {
-      console.error('Error sending pickup confirmation email:', error);
-      return { success: false, error: error.message };
-    }
-
-    console.log(`Pickup confirmation email sent to ${data.customerEmail}, ID: ${result?.id}`);
-    return { success: true, messageId: result?.id };
-  } catch (error) {
-    console.error('Error sending pickup confirmation email:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
-  }
+  console.log('Email sending temporarily disabled. Would send to:', data.customerEmail);
+  return { success: true, error: 'Email temporarily disabled' };
 }
 
 /**
  * Send both booking and pickup confirmation emails
+ * Currently disabled - returns success without sending
  */
 export async function sendAllBookingEmails(
   bookingData: BookingEmailData,
@@ -154,30 +74,10 @@ export async function sendAllBookingEmails(
   bookingEmail: { success: boolean; error?: string };
   pickupEmail?: { success: boolean; error?: string };
 }> {
-  // Send booking confirmation
-  const bookingResult = await sendBookingConfirmationEmail(bookingData);
-
-  // Send pickup confirmation if pickup data is provided
-  let pickupResult;
-  if (pickupData?.tourTime) {
-    pickupResult = await sendPickupConfirmationEmail({
-      customerName: bookingData.customerName,
-      customerEmail: bookingData.customerEmail,
-      bookingReference: bookingData.bookingReference,
-      tourName: bookingData.tourName,
-      tourDate: bookingData.tourDate,
-      tourTime: pickupData.tourTime || bookingData.tourTime || '',
-      pickupLocation: pickupData.pickupLocation,
-      pickupInstructions: pickupData.pickupInstructions,
-      whatToBring: pickupData.whatToBring,
-      emergencyContact: pickupData.emergencyContact,
-      language: bookingData.language,
-    });
-  }
-
+  console.log('Email sending temporarily disabled');
   return {
-    bookingEmail: bookingResult,
-    pickupEmail: pickupResult,
+    bookingEmail: { success: true, error: 'Email temporarily disabled' },
+    pickupEmail: pickupData?.tourTime ? { success: true, error: 'Email temporarily disabled' } : undefined,
   };
 }
 
