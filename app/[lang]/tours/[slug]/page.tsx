@@ -49,16 +49,19 @@ export default async function TourPage({ params }: TourPageProps) {
   const { lang, slug } = await params;
   const language = lang as Language;
 
+  // First get the tour data (needed for tour.id)
   const tourData = await getTourBySlug(slug, language);
 
   if (!tourData) {
     notFound();
   }
 
-  // Fetch availability for next 3 months
+  // Fetch availability for next 3 months (now that we have tour.id)
   const today = new Date();
   const startDate = format(today, 'yyyy-MM-dd');
   const endDate = format(addMonths(today, 3), 'yyyy-MM-dd');
+  
+  // Availability is fetched separately (tour data is cached, so this is fast)
   const availability = await getAvailability(tourData.id, startDate, endDate);
 
   // Extract tour base properties
