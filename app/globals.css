@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@plugin "flyonui";
+/* @plugin "flyonui" removed - causes __dirname error on Vercel */
 @import "flyonui/variants.css";
 
 :root {
