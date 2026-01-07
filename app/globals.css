@@ -1,0 +1,146 @@
+@import "tailwindcss";
+@plugin "flyonui";
+@import "flyonui/variants.css";
+@source "flyonui/dist/index.js";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Primary colors - Blue theme */
+  --primary-50: #e6f0ff;
+  --primary-100: #cce0ff;
+  --primary-200: #99c2ff;
+  --primary-300: #66a3ff;
+  --primary-400: #3385ff;
+  --primary-500: #0033FF;
+  --primary-600: #0029cc;
+  --primary-700: #001f99;
+  --primary-800: #001566;
+  --primary-900: #000a33;
+  
+  /* Accent color */
+  --color-accent: #0033FF;
+  
+  /* Container */
+  --container-max-width: 1225px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono);
+  
+  /* Custom colors */
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Typography scale */
+/* Removed global h1 styles to allow Tailwind utility classes to work properly */
+
+h2 {
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* Print styles for voucher */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  header, footer, nav {
+    display: none !important;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--primary-100);
+  color: var(--primary-900);
+}
+
+/* Focus styles with blue accent */
+*:focus-visible {
+  outline-color: var(--color-accent);
+}
+
+/* Tour card title hover effect */
+.group:hover .tour-card-title {
+  color: rgba(0, 51, 255, 1);
+}
+
+/* Footer link hover effects */
+.footer-link:hover {
+  color: var(--color-accent);
+}
+
+.social-link:hover {
+  color: var(--color-accent);
+}
+
+/* Wishlist toast animation */
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.3s ease-out;
+}
