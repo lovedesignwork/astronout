@@ -106,7 +106,8 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
               href={`/${language}/voucher/${booking.id}?token=${booking.voucher_token}`}
-              className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold text-white shadow-lg transition-all" style={{ backgroundColor: '#0033FF' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0029cc'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0033FF"
+              className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold text-white shadow-lg transition-all"
+              style={{ backgroundColor: '#0033FF' }}
             >
               <svg
                 className="mr-2 h-5 w-5"

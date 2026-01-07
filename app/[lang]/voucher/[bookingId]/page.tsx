@@ -35,7 +35,8 @@ export default async function VoucherPage({ params, searchParams }: VoucherPageP
           <div className="mb-6 flex justify-end no-print">
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white" style={{ backgroundColor: '#0033FF' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0029cc'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0033FF"
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+              style={{ backgroundColor: '#0033FF' }}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
