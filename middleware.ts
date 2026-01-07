@@ -1,91 +1,21 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 
 const SUPPORTED_LANGUAGES = ['en', 'zh', 'ru', 'ko', 'ja', 'fr', 'it', 'es', 'id'];
 const DEFAULT_LANGUAGE = 'en';
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Skip middleware for static files, api routes (except admin check), and Next.js internals
+  // Skip middleware for static files, api routes, and Next.js internals
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.includes('.') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    pathname.startsWith('/admin')
   ) {
     return NextResponse.next();
-  }
-
-  // Handle admin routes - check authentication
-  if (pathname.startsWith('/admin')) {
-    // Skip auth check for login page
-    if (pathname === '/admin/login') {
-      return NextResponse.next();
-    }
-
-    // Check if Supabase env vars are available
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      // If env vars not available, redirect to login (will show error there)
-      console.error('Supabase environment variables not configured');
-      const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('error', 'config');
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Create Supabase client for auth check
-    const response = NextResponse.next();
-    const supabase = createServerClient(
-      supabaseUrl,
-      supabaseAnonKey,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value;
-          },
-          set(name: string, value: string, options) {
-            response.cookies.set({ name, value, ...options });
-          },
-          remove(name: string, options) {
-            response.cookies.set({ name, value: '', ...options });
-          },
-        },
-      }
-    );
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        const loginUrl = new URL('/admin/login', request.url);
-        loginUrl.searchParams.set('redirect', pathname);
-        return NextResponse.redirect(loginUrl);
-      }
-
-      // Check if user is admin
-      const { data: adminUser } = await supabase
-        .from('admin_users')
-        .select('id, role')
-        .eq('id', user.id)
-        .single();
-
-      if (!adminUser) {
-        const loginUrl = new URL('/admin/login', request.url);
-        loginUrl.searchParams.set('error', 'unauthorized');
-        return NextResponse.redirect(loginUrl);
-      }
-
-      return response;
-    } catch (error) {
-      console.error('Middleware auth error:', error);
-      const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('error', 'auth_error');
-      return NextResponse.redirect(loginUrl);
-    }
   }
 
   // Check if pathname already has language prefix
@@ -129,8 +59,10 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - api routes
+     * - admin routes (auth handled in page)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\..*|api).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*|api|admin).*)',
   ],
 };
 
