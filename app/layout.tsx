@@ -38,9 +38,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <GoogleAnalytics />
-      {children}
-    </>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <GoogleAnalytics />
+        {children}
+      </body>
+    </html>
   );
 }
