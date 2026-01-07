@@ -100,7 +100,8 @@ export async function PUT(request: NextRequest) {
     }
 
     // Revalidate the branding cache so changes appear immediately
-    await revalidateTag('branding');
+    // In Next.js 16, revalidateTag requires a profile as second argument
+    await revalidateTag('branding', 'default');
 
     return NextResponse.json({
       success: true,
