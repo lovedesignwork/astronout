@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { createAdminClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/server';
 import { SUPPORTED_LANGUAGES } from '@/types';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic tour pages
   try {
-    const supabase = await createAdminClient();
+    const supabase = createPublicClient();
     const { data: tours } = await supabase
       .from('tours')
       .select('slug, updated_at')
@@ -46,6 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return sitemap;
 }
+
 
 
 

@@ -1,15 +1,16 @@
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient, createClient } from '@/lib/supabase/server';
 import { Language, DEFAULT_LANGUAGE, StaticPage, StaticPageTranslation, StaticPageWithTranslation } from '@/types';
 
 /**
  * Get a single static page by slug with translation for the specified language
+ * Uses public client to support static generation
  */
 export async function getStaticPage(
   slug: string,
   language: Language = DEFAULT_LANGUAGE
 ): Promise<StaticPageWithTranslation | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     // Get the page
     const { data: page, error: pageError } = await supabase
@@ -74,10 +75,11 @@ export async function getStaticPage(
 
 /**
  * Get all static pages (for admin)
+ * Uses public client to support static generation
  */
 export async function getAllStaticPages(): Promise<StaticPage[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('static_pages')
@@ -102,12 +104,13 @@ export async function getAllStaticPages(): Promise<StaticPage[]> {
 
 /**
  * Get a static page with all translations (for admin editing)
+ * Uses public client to support static generation
  */
 export async function getStaticPageWithAllTranslations(
   slug: string
 ): Promise<(StaticPage & { translations: StaticPageTranslation[] }) | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     // Get the page
     const { data: page, error: pageError } = await supabase
@@ -256,12 +259,13 @@ export async function updateStaticPageTranslation(
 
 /**
  * Get page titles for footer links
+ * Uses public client to support static generation
  */
 export async function getStaticPageTitles(
   language: Language = DEFAULT_LANGUAGE
 ): Promise<{ slug: string; title: string }[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data: pages, error: pagesError } = await supabase
       .from('static_pages')

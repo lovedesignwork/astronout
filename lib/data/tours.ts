@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/server';
 import { resolveTranslation } from '@/lib/i18n';
 import type {
   Language,
@@ -18,12 +18,13 @@ import type {
 
 /**
  * Get a tour by slug with all blocks and translations
+ * Uses public client to support static generation
  */
 export async function getTourBySlug(
   slug: string,
   lang: Language = 'en'
 ): Promise<TourWithDetails | null> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   // Fetch tour
   const { data: tour, error: tourError } = await supabase
@@ -138,9 +139,10 @@ export async function getTourBySlug(
 
 /**
  * List all published tours
+ * Uses public client to support static generation
  */
 export async function listTours(lang: Language = 'en'): Promise<Tour[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: tours, error } = await supabase
     .from('tours')
@@ -158,9 +160,10 @@ export async function listTours(lang: Language = 'en'): Promise<Tour[]> {
 
 /**
  * Get tours with hero block for listing page
+ * Uses public client to support static generation
  */
 export async function getToursWithHero(lang: Language = 'en') {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: tours, error } = await supabase
     .from('tours')
@@ -254,13 +257,14 @@ export async function getToursWithHero(lang: Language = 'en') {
 
 /**
  * Get tour availability for a date range
+ * Uses public client to support static generation
  */
 export async function getAvailability(
   tourId: string,
   startDate: string,
   endDate: string
 ): Promise<TourAvailability[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from('tour_availability')
@@ -282,6 +286,7 @@ export async function getAvailability(
 
 /**
  * Check if a specific slot is available
+ * Uses public client to support static generation
  */
 export async function checkSlotAvailability(
   tourId: string,
@@ -289,7 +294,7 @@ export async function checkSlotAvailability(
   timeSlot?: string,
   requestedCapacity: number = 1
 ): Promise<{ available: boolean; remaining: number }> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   let query = supabase
     .from('tour_availability')

@@ -1,4 +1,4 @@
-import { createAdminClient } from '@/lib/supabase/server';
+import { createPublicClient, createAdminClient } from '@/lib/supabase/server';
 import { Language } from '@/types';
 
 export interface UITranslationRow {
@@ -21,10 +21,11 @@ export interface UITranslationRow {
 /**
  * Fetch all UI translations from the database
  * Returns a map of { key: { lang: translation } }
+ * Uses public client to support static generation
  */
 export async function getUITranslations(): Promise<Record<Language, Record<string, string>>> {
   try {
-    const supabase = await createAdminClient();
+    const supabase = createPublicClient();
     
     const { data: translations, error } = await supabase
       .from('ui_translations')
@@ -88,10 +89,11 @@ function getEmptyTranslations(): Record<Language, Record<string, string>> {
 
 /**
  * Get a single translation by key
+ * Uses public client to support static generation
  */
 export async function getTranslationByKey(key: string): Promise<UITranslationRow | null> {
   try {
-    const supabase = await createAdminClient();
+    const supabase = createPublicClient();
     
     const { data, error } = await supabase
       .from('ui_translations')

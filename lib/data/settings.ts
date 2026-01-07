@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient, createClient } from '@/lib/supabase/server';
 import type { StripeSettings, StripePaymentMethods } from '@/types';
 
 export interface BrandingSettings {
@@ -21,12 +21,13 @@ export type { StripeSettings, StripePaymentMethods };
 
 /**
  * Get branding settings (logo and favicon)
+ * Uses public client to support static generation
  */
 export async function getBrandingSettings(): Promise<BrandingSettings> {
   const defaultSettings = { logo_url: null, favicon_url: null };
   
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     
     const { data, error } = await supabase
       .from('site_settings')
@@ -52,12 +53,13 @@ export async function getBrandingSettings(): Promise<BrandingSettings> {
 
 /**
  * Get general site settings
+ * Uses public client to support static generation
  */
 export async function getGeneralSettings(): Promise<GeneralSettings> {
   const defaultSettings = { site_name: 'Tour Booking', site_description: 'Book amazing tours and experiences' };
   
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     
     const { data, error } = await supabase
       .from('site_settings')
@@ -83,12 +85,13 @@ export async function getGeneralSettings(): Promise<GeneralSettings> {
 
 /**
  * Get contact settings
+ * Uses public client to support static generation
  */
 export async function getContactSettings(): Promise<ContactSettings> {
   const defaultSettings = { email: '', phone: '', address: '' };
   
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     
     const { data, error } = await supabase
       .from('site_settings')
@@ -131,6 +134,7 @@ export async function getAllSiteSettings() {
 
 /**
  * Get Stripe payment settings
+ * Uses public client to support static generation
  */
 export async function getStripeSettings(): Promise<StripeSettings> {
   const defaultSettings: StripeSettings = {
@@ -149,7 +153,7 @@ export async function getStripeSettings(): Promise<StripeSettings> {
   };
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('site_settings')
