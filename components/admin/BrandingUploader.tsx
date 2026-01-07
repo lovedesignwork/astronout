@@ -43,9 +43,8 @@ export function BrandingUploader({
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('files', file); // API expects 'files' key
       formData.append('folder', 'branding');
-      formData.append('bucket', 'site-assets'); // Mock bucket name
 
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
@@ -53,8 +52,8 @@ export function BrandingUploader({
       });
 
       const data = await res.json();
-      if (data.success) {
-        onChange(data.url);
+      if (data.success && data.files && data.files.length > 0) {
+        onChange(data.files[0].url); // API returns files array
       } else {
         setError(data.error || 'Upload failed');
       }
