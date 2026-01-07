@@ -86,3 +86,4 @@ END $$;
 -- =====================================================
 COMMENT ON COLUMN tours.tour_number IS 'Unique sequential tour identifier (0001, 0002, 0003, etc.)';
 
+

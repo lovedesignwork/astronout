@@ -50,3 +50,4 @@ CREATE POLICY "Allow admin users to insert site_settings"
 
 
 
+

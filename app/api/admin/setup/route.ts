@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 // It should only be called once during setup
 // After setup, you should disable or remove this endpoint
 
-const ADMIN_EMAIL = 'admin@astronout.co';
+const ADMIN_EMAIL = 'support@astronout.co';
 const ADMIN_PASSWORD = 'Admin123!@#';
 
 export async function POST(request: Request) {
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
               email: ADMIN_EMAIL,
               password: ADMIN_PASSWORD,
             },
-            loginUrl: '/admin/login',
+            loginUrl: '/mylogin',
           });
         }
       }
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
         email: ADMIN_EMAIL,
         password: ADMIN_PASSWORD,
       },
-      loginUrl: '/admin/login',
+      loginUrl: '/mylogin',
       warning: 'Please change the password after first login and disable this setup endpoint',
     });
 
@@ -186,7 +186,7 @@ export async function GET() {
       configured: true,
       hasAdmin: admins && admins.length > 0,
       message: admins && admins.length > 0 
-        ? 'Admin user exists. Login at /admin/login'
+        ? 'Admin user exists. Login at /mylogin'
         : 'No admin user. POST to this endpoint to create one.',
     });
 
@@ -197,6 +197,7 @@ export async function GET() {
     });
   }
 }
+
 
 
 

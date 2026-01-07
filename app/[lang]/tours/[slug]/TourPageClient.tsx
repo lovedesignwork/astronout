@@ -154,7 +154,7 @@ function TourPageContent({
             )}
             
             {/* Title and Wishlist Button Row */}
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-end justify-between gap-4">
               <div className="flex-1">
                 <h1 className="text-4xl font-bold text-white drop-shadow-lg md:text-5xl">{title}</h1>
                 {heroContent?.subtitle && (
@@ -163,7 +163,7 @@ function TourPageContent({
               </div>
               
               {/* Wishlist Button */}
-              <div className="flex-shrink-0 pt-2">
+              <div className="flex-shrink-0">
                 <WishlistButton
                   tourId={tour.id}
                   tourSlug={tour.slug}

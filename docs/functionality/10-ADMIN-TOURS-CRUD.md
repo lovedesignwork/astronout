@@ -87,3 +87,4 @@ DELETE /api/admin/tours/{id} - Delete tour
 
 
 
+

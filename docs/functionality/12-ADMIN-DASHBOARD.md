@@ -80,3 +80,4 @@ Uses snapshot values from bookings table, not current tour prices.
 
 
 
+

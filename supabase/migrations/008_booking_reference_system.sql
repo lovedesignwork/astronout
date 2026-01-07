@@ -128,3 +128,4 @@ SELECT 'Next booking will be: ' || preview_next_booking_number() AS next_booking
 
 
 
+

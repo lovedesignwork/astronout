@@ -30,7 +30,7 @@ export default async function AdminLayout({
       .single();
 
     if (!adminUser) {
-      redirect('/admin/login?error=unauthorized');
+      redirect('/mylogin?error=unauthorized');
     }
   }
 
