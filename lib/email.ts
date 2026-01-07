@@ -1,6 +1,4 @@
 import { Resend } from 'resend';
-import { BookingConfirmationEmail } from './email-templates/booking-confirmation';
-import { PickupConfirmationEmail } from './email-templates/pickup-confirmation';
 
 // Lazy initialize Resend client to avoid build-time errors
 let resend: Resend | null = null;
@@ -14,6 +12,17 @@ function getResendClient(): Resend {
     resend = new Resend(apiKey);
   }
   return resend;
+}
+
+// Dynamic imports to avoid bundling @react-email/components in Edge runtime
+async function getBookingConfirmationEmail() {
+  const { BookingConfirmationEmail } = await import('./email-templates/booking-confirmation');
+  return BookingConfirmationEmail;
+}
+
+async function getPickupConfirmationEmail() {
+  const { PickupConfirmationEmail } = await import('./email-templates/pickup-confirmation');
+  return PickupConfirmationEmail;
 }
 
 // Default sender email - update this after verifying your domain
@@ -70,6 +79,7 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData): Prom
 
   try {
     const client = getResendClient();
+    const BookingConfirmationEmail = await getBookingConfirmationEmail();
     const { data: result, error } = await client.emails.send({
       from: DEFAULT_FROM_EMAIL,
       to: data.customerEmail,
@@ -108,6 +118,7 @@ export async function sendPickupConfirmationEmail(data: PickupEmailData): Promis
 
   try {
     const client = getResendClient();
+    const PickupConfirmationEmail = await getPickupConfirmationEmail();
     const { data: result, error } = await client.emails.send({
       from: DEFAULT_FROM_EMAIL,
       to: data.customerEmail,
