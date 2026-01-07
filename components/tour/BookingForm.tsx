@@ -181,7 +181,7 @@ export function BookingForm({ pricing, availability, upsells, language, tourName
   // Calculate upsells total
   const calculateUpsellsTotal = () => {
     if (!selection?.upsells) return 0;
-    return selection.upsells.reduce((sum, upsell) => sum + upsell.totalPrice, 0);
+    return selection.upsells.reduce((sum, upsell) => sum + upsell.totalRetail, 0);
   };
 
   // Calculate grand total (tour + upsells)
@@ -259,6 +259,8 @@ export function BookingForm({ pricing, availability, upsells, language, tourName
         type: 'adult',
         label: 'Adult',
         quantity: guests.adult,
+        unit_price: prices.adult,
+        amount: guests.adult * prices.adult,
         unitRetailPrice: prices.adult,
         unitNetPrice: getNetPrice('adult'),
         totalRetail: guests.adult * prices.adult,
@@ -271,6 +273,8 @@ export function BookingForm({ pricing, availability, upsells, language, tourName
         type: 'child',
         label: 'Child',
         quantity: guests.child,
+        unit_price: prices.child,
+        amount: guests.child * prices.child,
         unitRetailPrice: prices.child,
         unitNetPrice: getNetPrice('child'),
         totalRetail: guests.child * prices.child,
@@ -283,6 +287,8 @@ export function BookingForm({ pricing, availability, upsells, language, tourName
         type: 'infant',
         label: 'Infant',
         quantity: guests.infant,
+        unit_price: prices.infant,
+        amount: guests.infant * prices.infant,
         unitRetailPrice: prices.infant,
         unitNetPrice: 0,
         totalRetail: guests.infant * prices.infant,
@@ -293,7 +299,7 @@ export function BookingForm({ pricing, availability, upsells, language, tourName
     const tourSelection: TourSelection = {
       breakdown,
       totalRetail: calculateTotal(),
-      totalNet: breakdown.reduce((sum, item) => sum + item.totalNet, 0),
+      totalNet: breakdown.reduce((sum, item) => sum + (item.totalNet ?? 0), 0),
       currency,
     };
     
@@ -1018,9 +1024,9 @@ export function BookingForm({ pricing, availability, upsells, language, tourName
           {selection?.upsells.map((upsell) => (
             <div key={upsell.upsellId} className="flex items-center justify-between text-[15px]">
               <span className="text-gray-600">
-                + {upsell.name} {upsell.quantity > 1 ? `× ${upsell.quantity}` : ''}
+                + {upsell.title} {upsell.quantity > 1 ? `× ${upsell.quantity}` : ''}
               </span>
-              <span className="font-medium text-gray-900">{formatCurrency(upsell.totalPrice, currency)}</span>
+              <span className="font-medium text-gray-900">{formatCurrency(upsell.totalRetail, currency)}</span>
             </div>
           ))}
           

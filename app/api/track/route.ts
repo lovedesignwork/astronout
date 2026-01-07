@@ -208,20 +208,24 @@ export async function POST(request: NextRequest) {
     }
     
     // Also update active session on pageview - fire and forget
-    supabase
-      .from('active_sessions')
-      .upsert({
-        session_id: sessionId,
-        page_path: pagePath,
-        country_code: geoData?.countryCode,
-        country_name: geoData?.country,
-        device_type: deviceType,
-        last_seen: new Date().toISOString(),
-      }, {
-        onConflict: 'session_id',
-      })
-      .then(() => {})
-      .catch(() => {}); // Ignore errors silently
+    (async () => {
+      try {
+        await supabase
+          .from('active_sessions')
+          .upsert({
+            session_id: sessionId,
+            page_path: pagePath,
+            country_code: geoData?.countryCode,
+            country_name: geoData?.country,
+            device_type: deviceType,
+            last_seen: new Date().toISOString(),
+          }, {
+            onConflict: 'session_id',
+          });
+      } catch {
+        // Ignore errors silently
+      }
+    })();
     
     return NextResponse.json({ success: true, type: 'pageview' });
   } catch (error) {

@@ -16,7 +16,7 @@ export function getStripeClient(secretKey: string): Stripe {
 
   // Create a new instance with the provided key
   return new Stripe(secretKey, {
-    apiVersion: '2025-04-30.basil',
+    apiVersion: '2025-12-15.clover',
     typescript: true,
   });
 }
@@ -34,7 +34,7 @@ export function getStripeFromEnv(): Stripe | null {
 
   if (!stripeInstance) {
     stripeInstance = new Stripe(secretKey, {
-      apiVersion: '2025-04-30.basil',
+      apiVersion: '2025-12-15.clover',
       typescript: true,
     });
   }
@@ -85,8 +85,8 @@ export function getPaymentMethodTypes(paymentMethods: {
   google_pay?: boolean;
   apple_pay?: boolean;
   promptpay?: boolean;
-}): Stripe.PaymentIntentCreateParams.PaymentMethodType[] {
-  const types: Stripe.PaymentIntentCreateParams.PaymentMethodType[] = [];
+}): string[] {
+  const types: string[] = [];
 
   // Card includes Google Pay and Apple Pay when using Payment Element
   if (paymentMethods.card) {

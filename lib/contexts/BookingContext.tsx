@@ -121,9 +121,9 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         return {
           tour: updatedTour,
           upsells: prev?.upsells || [],
-          grandTotalRetail: updatedTour.totalRetail + upsellsTotal,
-          grandTotalNet: updatedTour.totalNet + upsellsNet,
-          currency: updatedTour.currency,
+          grandTotalRetail: (updatedTour.totalRetail ?? 0) + upsellsTotal,
+          grandTotalNet: (updatedTour.totalNet ?? 0) + upsellsNet,
+          currency: updatedTour.currency || 'THB',
         };
       });
     },
@@ -154,8 +154,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       return {
         ...prev,
         upsells: newUpsells,
-        grandTotalRetail: prev.tour.totalRetail + upsellsTotal,
-        grandTotalNet: prev.tour.totalNet + upsellsNet,
+        grandTotalRetail: (prev.tour.totalRetail ?? 0) + upsellsTotal,
+        grandTotalNet: (prev.tour.totalNet ?? 0) + upsellsNet,
       };
     });
   }, []);
@@ -171,8 +171,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       return {
         ...prev,
         upsells: newUpsells,
-        grandTotalRetail: prev.tour.totalRetail + upsellsTotal,
-        grandTotalNet: prev.tour.totalNet + upsellsNet,
+        grandTotalRetail: (prev.tour.totalRetail ?? 0) + upsellsTotal,
+        grandTotalNet: (prev.tour.totalNet ?? 0) + upsellsNet,
       };
     });
   }, []);
@@ -201,8 +201,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         return {
           ...prev,
           upsells: newUpsells,
-          grandTotalRetail: prev.tour.totalRetail + upsellsTotal,
-          grandTotalNet: prev.tour.totalNet + upsellsNet,
+          grandTotalRetail: (prev.tour.totalRetail ?? 0) + upsellsTotal,
+          grandTotalNet: (prev.tour.totalNet ?? 0) + upsellsNet,
         };
       });
     },
@@ -230,8 +230,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const isSelectionValid =
     selection !== null &&
     selection.tour.date !== '' &&
-    selection.tour.pax.total > 0 &&
-    selection.tour.totalRetail > 0;
+    (selection.tour.pax?.total ?? 0) > 0 &&
+    (selection.tour.totalRetail ?? 0) > 0;
 
   return (
     <BookingContext.Provider

@@ -53,16 +53,17 @@ export async function createBooking(
   const items: Partial<BookingItem>[] = [];
 
   // Add main tour item
+  const paxTotal = tour.pax?.total ?? 1;
   items.push({
     booking_id: booking.id,
     item_type: 'tour',
     item_id: payload.tourId,
-    item_name: tour.tourName,
-    quantity: tour.pax.total,
-    retail_price_snapshot: tour.totalRetail / tour.pax.total,
-    net_price_snapshot: tour.totalNet / tour.pax.total,
-    subtotal_retail: tour.totalRetail,
-    subtotal_net: tour.totalNet,
+    item_name: tour.tourName ?? '',
+    quantity: paxTotal,
+    retail_price_snapshot: (tour.totalRetail ?? 0) / paxTotal,
+    net_price_snapshot: (tour.totalNet ?? 0) / paxTotal,
+    subtotal_retail: tour.totalRetail ?? 0,
+    subtotal_net: tour.totalNet ?? 0,
     metadata: {
       date: tour.date,
       time: tour.time,

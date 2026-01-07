@@ -177,6 +177,8 @@ export function BookingSidebar({ pricing, availability, language }: BookingSideb
         type: 'adult',
         label: 'Adult',
         quantity: guests.adult,
+        unit_price: prices.adult,
+        amount: guests.adult * prices.adult,
         unitRetailPrice: prices.adult,
         unitNetPrice: getNetPrice('adult'),
         totalRetail: guests.adult * prices.adult,
@@ -189,6 +191,8 @@ export function BookingSidebar({ pricing, availability, language }: BookingSideb
         type: 'child',
         label: 'Child',
         quantity: guests.child,
+        unit_price: prices.child,
+        amount: guests.child * prices.child,
         unitRetailPrice: prices.child,
         unitNetPrice: getNetPrice('child'),
         totalRetail: guests.child * prices.child,
@@ -201,6 +205,8 @@ export function BookingSidebar({ pricing, availability, language }: BookingSideb
         type: 'infant',
         label: 'Infant',
         quantity: guests.infant,
+        unit_price: prices.infant,
+        amount: guests.infant * prices.infant,
         unitRetailPrice: prices.infant,
         unitNetPrice: 0,
         totalRetail: guests.infant * prices.infant,
@@ -211,7 +217,7 @@ export function BookingSidebar({ pricing, availability, language }: BookingSideb
     const tourSelection: TourSelection = {
       breakdown,
       totalRetail: calculateTotal(),
-      totalNet: breakdown.reduce((sum, item) => sum + item.totalNet, 0),
+      totalNet: breakdown.reduce((sum, item) => sum + (item.totalNet ?? 0), 0),
       currency,
     };
     

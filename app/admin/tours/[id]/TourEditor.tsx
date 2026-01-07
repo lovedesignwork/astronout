@@ -258,7 +258,10 @@ export function TourEditor({ tourId, tourNumber, initialTour }: TourEditorProps)
             initialTags={(tour as unknown as { tags?: string[] }).tags || []}
             onUpdate={(data) => {
               if (data.title) setHeroTitle(data.title);
-              handleTourUpdate(data);
+              handleTourUpdate({
+                ...data,
+                status: data.status as 'draft' | 'published' | 'archived' | undefined,
+              });
             }}
             onMessage={showMessage}
           />

@@ -905,10 +905,10 @@ export default function SettingsPage() {
         isOpen={deleteDialogOpen}
         title="Delete Staff Member"
         message={`Are you sure you want to remove ${staffToDelete?.email}? This action cannot be undone.`}
-        confirmLabel="Delete"
-        confirmVariant="danger"
+        confirmText="Delete"
+        variant="danger"
         onConfirm={handleDeleteConfirm}
-        onCancel={() => {
+        onClose={() => {
           setDeleteDialogOpen(false);
           setStaffToDelete(null);
         }}

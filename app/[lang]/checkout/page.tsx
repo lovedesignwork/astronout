@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { useLanguage } from '@/lib/contexts/LanguageContext';
@@ -10,7 +10,7 @@ import { StripeProvider } from '@/components/checkout/StripeProvider';
 import { StripePaymentForm } from '@/components/checkout/StripePaymentForm';
 import type { StripePaymentMethods } from '@/types';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const { language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -451,7 +451,7 @@ export default function CheckoutPage() {
                     {selection.tour.tourName}
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
-                    {new Date(selection.tour.date).toLocaleDateString('en-US', {
+                    {selection.tour.date && new Date(selection.tour.date).toLocaleDateString('en-US', {
                       weekday: 'long',
                       year: 'numeric',
                       month: 'long',
@@ -461,7 +461,7 @@ export default function CheckoutPage() {
                   </p>
 
                   <div className="mt-4 space-y-2">
-                    {selection.tour.priceBreakdown.map((item, index) => (
+                    {(selection.tour.priceBreakdown || []).map((item, index) => (
                       <div
                         key={index}
                         className="flex items-center justify-between text-sm"
@@ -540,5 +540,17 @@ export default function CheckoutPage() {
         </div>
       </Container>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="size-8 animate-spin rounded-full border-4 border-[#0033FF] border-t-transparent" />
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }

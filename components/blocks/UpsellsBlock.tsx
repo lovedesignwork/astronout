@@ -4,17 +4,33 @@ import { Container } from '@/components/layout/Container';
 import { UpsellCard } from '@/components/upsells/UpsellCard';
 import { useBookingContext } from '@/lib/contexts/BookingContext';
 import type { BlockProps } from './registry';
+import type { UpsellSelection } from '@/types';
 
 interface UpsellsContent {
   showTitle?: boolean;
 }
 
 export function UpsellsBlock({ block }: BlockProps) {
-  const { upsells, selection } = useBookingContext();
+  const { upsells, selection, addUpsell, removeUpsell } = useBookingContext();
   const content = block.content as UpsellsContent;
 
   // Only show upsells if main selection is valid
-  const isMainSelectionValid = selection?.tour?.date && selection?.tour?.pax?.total > 0;
+  const isMainSelectionValid = selection?.tour?.date && (selection?.tour?.pax?.total ?? 0) > 0;
+  const guestCount = selection?.tour?.pax?.total ?? 1;
+
+  const handleUpsellToggle = (upsellSelection: UpsellSelection, selected: boolean) => {
+    if (!selection) return;
+    
+    if (selected) {
+      addUpsell(upsellSelection);
+    } else {
+      removeUpsell(upsellSelection.upsellId);
+    }
+  };
+
+  const isUpsellSelected = (upsellId: string) => {
+    return selection?.upsells?.some(u => u.upsellId === upsellId) || false;
+  };
 
   if (!upsells || upsells.length === 0) {
     return null;
@@ -34,7 +50,13 @@ export function UpsellsBlock({ block }: BlockProps) {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {upsells.map((upsell) => (
-              <UpsellCard key={upsell.id} upsell={upsell} />
+              <UpsellCard 
+                key={upsell.id} 
+                upsell={upsell}
+                selected={isUpsellSelected(upsell.id)}
+                guestCount={guestCount}
+                onToggle={handleUpsellToggle}
+              />
             ))}
           </div>
         )}

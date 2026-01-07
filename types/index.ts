@@ -308,19 +308,24 @@ export interface Redirect {
 
 // Selection payload (normalized output from pricing engines)
 export interface PriceBreakdownItem {
+  type?: 'adult' | 'child' | 'infant' | 'seat' | 'package';
   label: string;
   quantity: number;
-  unit_price: number;
+  unit_price?: number;
   amount: number;
+  unitRetailPrice?: number;
+  unitNetPrice?: number;
+  totalRetail?: number;
+  totalNet?: number;
 }
 
 export interface TourSelection {
-  tourId: string;
-  tourSlug: string;
-  tourName: string;
-  date: string;
+  tourId?: string;
+  tourSlug?: string;
+  tourName?: string;
+  date?: string;
   time?: string;
-  pax: {
+  pax?: {
     adult?: number;
     child?: number;
     total: number;
@@ -329,10 +334,11 @@ export interface TourSelection {
     type: string;
     qty: number;
   };
-  priceBreakdown: PriceBreakdownItem[];
-  totalRetail: number;
-  totalNet: number;
-  currency: string;
+  priceBreakdown?: PriceBreakdownItem[];
+  breakdown?: PriceBreakdownItem[];
+  totalRetail?: number;
+  totalNet?: number;
+  currency?: string;
 }
 
 export interface UpsellSelection {

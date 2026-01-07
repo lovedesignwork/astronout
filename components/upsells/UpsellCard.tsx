@@ -55,12 +55,12 @@ export function UpsellCard({ upsell, selected, guestCount, onToggle, compact = f
 
     const selection: UpsellSelection = {
       upsellId: upsell.id,
-      name: upsell.title,
+      title: upsell.title,
       pricingType: upsell.pricing_type,
       quantity: qty,
       unitRetailPrice: getUnitPrice(),
       unitNetPrice: upsell.net_price,
-      totalPrice: totalRetail,
+      totalRetail,
       totalNet,
     };
 
@@ -74,8 +74,8 @@ export function UpsellCard({ upsell, selected, guestCount, onToggle, compact = f
 
     // If already selected, update with new quantity
     if (selected) {
-      const totalRetail = calculateTotal(clampedQty);
-      const totalNet =
+      const newTotalRetail = calculateTotal(clampedQty);
+      const newTotalNet =
         upsell.pricing_type === 'per_person'
           ? upsell.net_price * paxTotal * clampedQty
           : upsell.pricing_type === 'per_booking'
@@ -84,13 +84,13 @@ export function UpsellCard({ upsell, selected, guestCount, onToggle, compact = f
 
       const selection: UpsellSelection = {
         upsellId: upsell.id,
-        name: upsell.title,
+        title: upsell.title,
         pricingType: upsell.pricing_type,
         quantity: clampedQty,
         unitRetailPrice: getUnitPrice(),
         unitNetPrice: upsell.net_price,
-        totalPrice: totalRetail,
-        totalNet,
+        totalRetail: newTotalRetail,
+        totalNet: newTotalNet,
       };
 
       onToggle(selection, true);

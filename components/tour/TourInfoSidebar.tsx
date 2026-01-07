@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { TourBlockWithTranslation } from '@/types';
 
 interface TourInfoSidebarProps {
@@ -123,8 +123,12 @@ function GoogleReviewsSlider({
   currentReviewIndex,
   setCurrentReviewIndex,
 }: { 
-  googleRating: typeof MOCKUP_GOOGLE_RATING;
-  renderStars: (rating: number, size?: 'sm' | 'md') => JSX.Element;
+  googleRating: {
+    rating: number;
+    reviewCount: number;
+    reviews?: { author: string; rating: number; text: string; date: string; avatarUrl?: string }[];
+  };
+  renderStars: (rating: number, size?: 'sm' | 'md') => React.JSX.Element;
   currentReviewIndex: number;
   setCurrentReviewIndex: (index: number | ((prev: number) => number)) => void;
 }) {

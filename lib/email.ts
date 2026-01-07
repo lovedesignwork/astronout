@@ -2,8 +2,19 @@ import { Resend } from 'resend';
 import { BookingConfirmationEmail } from './email-templates/booking-confirmation';
 import { PickupConfirmationEmail } from './email-templates/pickup-confirmation';
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialize Resend client to avoid build-time errors
+let resend: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!resend) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY environment variable is not set');
+    }
+    resend = new Resend(apiKey);
+  }
+  return resend;
+}
 
 // Default sender email - update this after verifying your domain
 const DEFAULT_FROM_EMAIL = 'Astronout <noreply@resend.dev>';
@@ -58,7 +69,8 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData): Prom
   }
 
   try {
-    const { data: result, error } = await resend.emails.send({
+    const client = getResendClient();
+    const { data: result, error } = await client.emails.send({
       from: DEFAULT_FROM_EMAIL,
       to: data.customerEmail,
       subject: `Booking Confirmed - ${data.bookingReference}`,
@@ -95,7 +107,8 @@ export async function sendPickupConfirmationEmail(data: PickupEmailData): Promis
   }
 
   try {
-    const { data: result, error } = await resend.emails.send({
+    const client = getResendClient();
+    const { data: result, error } = await client.emails.send({
       from: DEFAULT_FROM_EMAIL,
       to: data.customerEmail,
       subject: `Pickup Details - ${data.tourName} on ${data.tourDate}`,

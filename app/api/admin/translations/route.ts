@@ -36,7 +36,7 @@ export interface UITranslation {
   fr: string | null;
   it: string | null;
   es: string | null;
-  id: string | null;
+  id_lang: string | null; // Indonesian - renamed to avoid conflict with id field
   created_at: string;
   updated_at: string;
 }

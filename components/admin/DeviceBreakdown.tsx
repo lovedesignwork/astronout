@@ -179,7 +179,7 @@ export function DeviceBreakdown({ devices, browsers }: DeviceBreakdownProps) {
                 <div className="flex justify-center mb-4">
                   <PieChart 
                     data={browsers.map(b => ({ label: b.browser, percentage: b.percentage }))}
-                    getColor={(_, i) => browserColors[browsers.findIndex(b => b.browser === _) % browserColors.length]}
+                    getColor={(label) => browserColors[browsers.findIndex(b => b.browser === label) % browserColors.length]}
                   />
                 </div>
                 
