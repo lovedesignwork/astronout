@@ -64,6 +64,7 @@ export default async function TourPage({ params }: TourPageProps) {
   // Extract tour base properties
   const tour = {
     id: tourData.id,
+    tour_number: tourData.tour_number || '',
     slug: tourData.slug,
     status: tourData.status,
     pricing_engine: tourData.pricing_engine,
