@@ -1,3 +1,5 @@
+'use server';
+
 import { Resend } from 'resend';
 
 // Lazy initialize Resend client to avoid build-time errors
