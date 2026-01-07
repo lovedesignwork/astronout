@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Exclude packages that use Node.js APIs from Edge Runtime bundling
-  serverExternalPackages: ['@react-email/components', '@react-email/render', 'resend'],
+  serverExternalPackages: ['@react-email/components', '@react-email/render', 'resend', 'flyonui'],
   async redirects() {
     return [
       {
