@@ -100,7 +100,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Revalidate the branding cache so changes appear immediately
-    revalidateTag('branding');
+    await revalidateTag('branding');
 
     return NextResponse.json({
       success: true,
