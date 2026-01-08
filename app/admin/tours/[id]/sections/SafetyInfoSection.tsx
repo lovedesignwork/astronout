@@ -68,18 +68,30 @@ export function SafetyInfoSection({
       const blocksRes = await fetch(`/api/admin/tours/${tourId}/blocks`);
       const blocksData = await blocksRes.json();
       
-      if (blocksData.success) {
-        const safetyBlock = blocksData.blocks?.find((b: { block_type: string }) => b.block_type === 'safety_info');
-        if (safetyBlock) {
-          await fetch(`/api/admin/tours/${tourId}/blocks/${safetyBlock.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              content: { items, restrictions },
-              language: 'en',
-            }),
-          });
-        }
+      if (!blocksData.success) {
+        onMessage('error', blocksData.error || 'Failed to fetch blocks');
+        return;
+      }
+
+      const safetyBlock = blocksData.blocks?.find((b: { block_type: string }) => b.block_type === 'safety_info');
+      if (!safetyBlock) {
+        onMessage('error', 'Safety info block not found');
+        return;
+      }
+
+      const updateRes = await fetch(`/api/admin/tours/${tourId}/blocks/${safetyBlock.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: { items, restrictions },
+          language: 'en',
+        }),
+      });
+      
+      const updateData = await updateRes.json();
+      if (!updateData.success) {
+        onMessage('error', updateData.error || 'Failed to save');
+        return;
       }
 
       onUpdate({ items, restrictions });
