@@ -18,10 +18,11 @@ import type {
   TourCategory,
   SpecialLabel,
   PricingConfig,
+  MainMedia,
 } from '@/types';
 
 interface TourPageClientProps {
-  tour: Tour;
+  tour: Tour & { main_media?: MainMedia[] };
   blocks: TourBlockWithTranslation[];
   pricing: TourPricing | null;
   upsells: UpsellWithTranslation[];
@@ -70,10 +71,19 @@ function TourPageContent({
   const heroContent = heroBlock?.content as HeroContent | undefined;
   const title = heroBlock?.title || tour.slug;
 
-  // Get images from hero content
-  const images = heroContent?.images || (heroContent?.imageUrl ? [heroContent.imageUrl] : []);
+  // Get images from main_media first (set in admin Images section), fallback to hero content
+  const mainMediaImages = (tour.main_media || [])
+    .filter((m) => m.type === 'image' && m.url)
+    .sort((a, b) => a.order - b.order)
+    .map((m) => m.url);
   
-  // Add some placeholder images if we only have one
+  // Fallback to hero content images if no main_media
+  const heroImages = heroContent?.images || (heroContent?.imageUrl ? [heroContent.imageUrl] : []);
+  
+  // Use main_media images if available, otherwise fallback to hero images
+  const images = mainMediaImages.length > 0 ? mainMediaImages : heroImages;
+  
+  // Add placeholder if no images at all
   const galleryImages = images.length > 0 ? images : [
     'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800',
   ];

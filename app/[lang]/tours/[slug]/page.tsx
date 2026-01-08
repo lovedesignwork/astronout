@@ -64,7 +64,7 @@ export default async function TourPage({ params }: TourPageProps) {
   // Availability is fetched separately (tour data is cached, so this is fast)
   const availability = await getAvailability(tourData.id, startDate, endDate);
 
-  // Extract tour base properties
+  // Extract tour base properties including main_media for gallery
   const tour = {
     id: tourData.id,
     tour_number: tourData.tour_number || '',
@@ -74,6 +74,8 @@ export default async function TourPage({ params }: TourPageProps) {
     tags: tourData.tags || [],
     created_at: tourData.created_at,
     updated_at: tourData.updated_at,
+    // Include main_media for gallery display
+    main_media: tourData.main_media || [],
   };
 
   return (
