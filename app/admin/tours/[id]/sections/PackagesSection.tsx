@@ -82,13 +82,21 @@ export function PackagesSection({
       });
       const data = await res.json();
       if (data.success) {
+        // Update local state with saved packages (which have real IDs from database)
+        setPackages(data.packages || packages);
         onUpdate({ packages: data.packages || packages });
-        onMessage('success', 'Packages saved');
+        if (data.warnings && data.warnings.length > 0) {
+          onMessage('error', `Saved with warnings: ${data.warnings.join(', ')}`);
+        } else {
+          onMessage('success', 'Packages saved');
+        }
       } else {
-        onMessage('error', data.error || 'Failed to save');
+        console.error('Failed to save packages:', data.error);
+        onMessage('error', data.error || 'Failed to save packages');
       }
-    } catch {
-      onMessage('error', 'An error occurred');
+    } catch (err) {
+      console.error('Error saving packages:', err);
+      onMessage('error', 'An error occurred while saving packages');
     } finally {
       setIsSaving(false);
     }

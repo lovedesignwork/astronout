@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import type { TourPackage, PackageUpsell } from '@/types';
 
@@ -141,6 +142,7 @@ export async function PUT(
 
     // Upsert packages
     const savedPackages: TourPackage[] = [];
+    const errors: string[] = [];
 
     for (const pkg of packages) {
       const isNew = pkg.id.startsWith('new-');
@@ -170,6 +172,7 @@ export async function PUT(
 
         if (error) {
           console.error('Error inserting package:', error);
+          errors.push(`Failed to create package "${pkg.title}": ${error.message}`);
           continue;
         }
         savedPackage = data as TourPackage;
@@ -184,6 +187,7 @@ export async function PUT(
 
         if (error) {
           console.error('Error updating package:', error);
+          errors.push(`Failed to update package "${pkg.title}": ${error.message}`);
           continue;
         }
         savedPackage = data as TourPackage;
@@ -226,7 +230,20 @@ export async function PUT(
       savedPackages.push(savedPackage);
     }
 
-    return NextResponse.json({ success: true, packages: savedPackages });
+    // Return errors if any packages failed
+    if (errors.length > 0 && savedPackages.length === 0) {
+      return NextResponse.json({ success: false, error: errors.join('; ') }, { status: 500 });
+    }
+
+    // Revalidate cache so frontend reflects changes
+    revalidateTag('tours');
+    revalidateTag(`tour-${tourId}`);
+
+    return NextResponse.json({ 
+      success: true, 
+      packages: savedPackages,
+      warnings: errors.length > 0 ? errors : undefined
+    });
   } catch (error) {
     console.error('Error updating packages:', error);
     return NextResponse.json(
