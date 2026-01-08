@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { createAdminClient } from '@/lib/supabase/server';
 
 // Helper to get tour by ID or tour_number
@@ -197,6 +198,14 @@ export async function PUT(
         }, { status: 400 });
       }
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    }
+
+    // Revalidate cache for this tour so frontend shows updated data immediately
+    try {
+      revalidateTag('tours');
+      revalidateTag(`tour-${tour.slug}`);
+    } catch (e) {
+      console.error('Cache revalidation error:', e);
     }
 
     return NextResponse.json({ success: true, tour });

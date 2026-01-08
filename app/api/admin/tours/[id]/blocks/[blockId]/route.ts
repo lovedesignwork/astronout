@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { createAdminClient } from '@/lib/supabase/server';
 
 // PUT - Update block
@@ -7,7 +8,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string; blockId: string }> }
 ) {
   try {
-    const { blockId } = await params;
+    const { id: tourIdOrNumber, blockId } = await params;
     const body = await request.json();
     const supabase = await createAdminClient();
 
@@ -64,6 +65,31 @@ export async function PUT(
           return NextResponse.json({ success: false, error: transError.message }, { status: 400 });
         }
       }
+    }
+
+    // Revalidate cache for this tour so frontend shows updated data immediately
+    try {
+      // Get the tour slug for cache tag
+      const { data: block } = await supabase
+        .from('tour_blocks')
+        .select('tour_id')
+        .eq('id', blockId)
+        .single();
+      
+      if (block?.tour_id) {
+        const { data: tour } = await supabase
+          .from('tours')
+          .select('slug')
+          .eq('id', block.tour_id)
+          .single();
+        
+        if (tour?.slug) {
+          revalidateTag('tours');
+          revalidateTag(`tour-${tour.slug}`);
+        }
+      }
+    } catch (e) {
+      console.error('Cache revalidation error:', e);
     }
 
     return NextResponse.json({ success: true });
