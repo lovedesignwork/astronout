@@ -84,8 +84,8 @@ export async function PUT(
           .single();
         
         if (tour?.slug) {
-          revalidateTag('tours');
-          revalidateTag(`tour-${tour.slug}`);
+          await revalidateTag('tours', 'default');
+          await revalidateTag(`tour-${tour.slug}`, 'default');
         }
       }
     } catch (e) {

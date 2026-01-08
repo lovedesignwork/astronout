@@ -202,8 +202,8 @@ export async function PUT(
 
     // Revalidate cache for this tour so frontend shows updated data immediately
     try {
-      revalidateTag('tours');
-      revalidateTag(`tour-${tour.slug}`);
+      await revalidateTag('tours', 'default');
+      await revalidateTag(`tour-${tour.slug}`, 'default');
     } catch (e) {
       console.error('Cache revalidation error:', e);
     }

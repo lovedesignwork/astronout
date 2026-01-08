@@ -235,9 +235,9 @@ export async function PUT(
       return NextResponse.json({ success: false, error: errors.join('; ') }, { status: 500 });
     }
 
-    // Revalidate cache so frontend reflects changes
-    revalidateTag('tours');
-    revalidateTag(`tour-${tourId}`);
+    // Revalidate cache so frontend reflects changes (Next.js 16 requires profile arg)
+    await revalidateTag('tours', 'default');
+    await revalidateTag(`tour-${tourId}`, 'default');
 
     return NextResponse.json({ 
       success: true, 
