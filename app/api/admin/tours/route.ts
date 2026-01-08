@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { slug, pricingEngine } = body;
+    const { title, slug, pricingEngine } = body;
 
     if (!slug || !pricingEngine) {
       return NextResponse.json(
@@ -175,9 +175,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create default translations for each block
+    // Use provided title for hero block, or generate from slug
+    const tourTitle = title || slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    
     if (blocks) {
       const translations = blocks.map(block => {
         const defaults = getDefaultTranslations(block.block_type, slug);
+        // Use the provided title for the hero block
+        if (block.block_type === 'hero') {
+          defaults.title = tourTitle;
+        }
         return {
           block_id: block.id,
           language: 'en',

@@ -1,15 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function NewTourPage() {
   const router = useRouter();
+  const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [pricingEngine, setPricingEngine] = useState<'flat_per_person' | 'adult_child' | 'seat_based'>('flat_per_person');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  // Auto-generate slug from title unless manually edited
+  useEffect(() => {
+    if (!slugManuallyEdited && title) {
+      const generatedSlug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      setSlug(generatedSlug);
+    }
+  }, [title, slugManuallyEdited]);
+
+  const handleSlugChange = (value: string) => {
+    setSlugManuallyEdited(true);
+    setSlug(value.toLowerCase().replace(/[^a-z0-9-]/g, '-'));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +40,7 @@ export default function NewTourPage() {
       const response = await fetch('/api/admin/tours', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, pricingEngine }),
+        body: JSON.stringify({ title, slug, pricingEngine }),
       });
 
       const data = await response.json();
@@ -62,18 +82,38 @@ export default function NewTourPage() {
 
           <div className="mb-6">
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Tour Slug *
+              Tour Title *
             </label>
             <input
               type="text"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
               className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-              placeholder="phi-phi-islands-tour"
+              placeholder="Phi Phi Islands Tour"
             />
             <p className="mt-1 text-sm text-gray-500">
-              URL-friendly identifier (lowercase, hyphens only)
+              The display name for your tour
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              URL Slug *
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-400">/tours/</span>
+              <input
+                type="text"
+                value={slug}
+                onChange={(e) => handleSlugChange(e.target.value)}
+                required
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="phi-phi-islands-tour"
+              />
+            </div>
+            <p className="mt-1 text-sm text-gray-500">
+              Auto-generated from title. URL-friendly identifier (lowercase, hyphens only)
             </p>
           </div>
 
@@ -131,7 +171,7 @@ export default function NewTourPage() {
           </button>
           <button
             type="submit"
-            disabled={isSubmitting || !slug}
+            disabled={isSubmitting || !title || !slug}
             className="flex-1 rounded-lg bg-emerald-600 px-6 py-3 font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? 'Creating...' : 'Create Tour'}

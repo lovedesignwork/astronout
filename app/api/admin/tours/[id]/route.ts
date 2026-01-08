@@ -187,6 +187,15 @@ export async function PUT(
       .single();
 
     if (error) {
+      // Check if it's a schema cache error (missing columns)
+      if (error.message.includes('schema cache') || error.message.includes('column')) {
+        console.error('Database schema error:', error.message);
+        return NextResponse.json({ 
+          success: false, 
+          error: 'Database schema mismatch. Please run the migration: supabase/migrations/005_add_missing_tour_columns.sql',
+          details: error.message
+        }, { status: 400 });
+      }
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     }
 

@@ -23,6 +23,9 @@ export function NeedHelpSection({
       const data = await res.json();
       if (data.success) {
         onUpdate({ need_help_enabled: newEnabled });
+        onMessage('success', `Need Help ${newEnabled ? 'enabled' : 'disabled'}`);
+      } else {
+        onMessage('error', data.error || 'Failed to update');
       }
     } catch {
       onMessage('error', 'Failed to update');

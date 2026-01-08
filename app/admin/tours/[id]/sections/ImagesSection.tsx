@@ -237,7 +237,10 @@ export function ImagesSection({
                         type="button"
                         onClick={() => {
                           setActiveMainMediaIndex(index);
-                          handleMainMediaChange(index, 'image', '', undefined);
+                          // Only switch to image mode if currently in video mode, don't clear existing image
+                          if (media?.type === 'video') {
+                            handleMainMediaChange(index, 'image', '', undefined);
+                          }
                         }}
                         className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
                           !media || media.type === 'image'
@@ -251,6 +254,10 @@ export function ImagesSection({
                         type="button"
                         onClick={() => {
                           setActiveMainMediaIndex(index);
+                          // Only switch to video mode if currently in image mode, don't clear existing video
+                          if (!media || media.type === 'image') {
+                            handleMainMediaChange(index, 'video', '', undefined);
+                          }
                         }}
                         className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
                           media?.type === 'video'
@@ -322,8 +329,15 @@ export function ImagesSection({
                               try {
                                 const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
                                 const data = await res.json();
-                                if (data.success) handleMainMediaChange(index, 'image', data.url);
-                              } catch {}
+                                if (data.success) {
+                                  handleMainMediaChange(index, 'image', data.url);
+                                  onMessage('success', 'Image uploaded');
+                                } else {
+                                  onMessage('error', data.error || 'Upload failed');
+                                }
+                              } catch {
+                                onMessage('error', 'Upload failed');
+                              }
                             }}
                             className="hidden"
                           />

@@ -68,15 +68,15 @@ export function DashboardDateFilter({ currentRange, startDate, endDate }: DateFi
   return (
     <div className="flex flex-wrap items-center gap-4">
       {/* Quick Filters - Tabs Style */}
-      <div className="join shadow-sm">
+      <div className="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 shadow-sm">
         {rangeOptions.map((item) => (
           <button
             key={item.key}
             onClick={() => handleRangeChange(item.key as DateRange)}
-            className={`join-item btn btn-sm font-semibold ${
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
               currentRange === item.key
-                ? 'bg-gradient-to-r from-purple-600 to-blue-500 text-white border-none hover:from-purple-700 hover:to-blue-600'
-                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
             {item.label}
