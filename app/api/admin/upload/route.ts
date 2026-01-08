@@ -67,7 +67,12 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const files = formData.getAll('files') as File[];
+    // Support both 'file' (single) and 'files' (multiple) field names
+    let files = formData.getAll('files') as File[];
+    const singleFile = formData.get('file') as File | null;
+    if (singleFile && files.length === 0) {
+      files = [singleFile];
+    }
     const folder = formData.get('folder') as string || 'temp';
 
     if (!files || files.length === 0) {
@@ -139,9 +144,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Return both 'files' array and 'url' (first file) for backwards compatibility
     return NextResponse.json({
       success: true,
       files: uploadedFiles,
+      url: uploadedFiles[0]?.url, // For single file uploads
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {

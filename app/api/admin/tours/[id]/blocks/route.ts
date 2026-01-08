@@ -42,6 +42,68 @@ async function resolveTourId(supabase: Awaited<ReturnType<typeof createAdminClie
   return tour?.id || null;
 }
 
+// GET - List all blocks for a tour
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const auth = await verifyAdmin();
+    if (!auth.authorized) {
+      return NextResponse.json(
+        { success: false, error: auth.error },
+        { status: 401 }
+      );
+    }
+
+    const { id: idOrNumber } = await params;
+    const supabase = await createAdminClient();
+    
+    // Resolve tour ID from UUID or tour_number
+    const tourId = await resolveTourId(supabase, idOrNumber);
+    if (!tourId) {
+      return NextResponse.json({ success: false, error: 'Tour not found' }, { status: 404 });
+    }
+
+    // Fetch blocks with translations
+    const { data: blocks, error } = await supabase
+      .from('tour_blocks')
+      .select(`
+        *,
+        translations:tour_block_translations(*)
+      `)
+      .eq('tour_id', tourId)
+      .order('order', { ascending: true });
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    // Process blocks to merge English translation
+    const processedBlocks = blocks?.map((block) => {
+      const enTranslation = block.translations?.find(
+        (t: { language: string }) => t.language === 'en'
+      );
+      return {
+        ...block,
+        title: enTranslation?.title || '',
+        content: enTranslation?.content || {},
+      };
+    }) || [];
+
+    return NextResponse.json({ success: true, blocks: processedBlocks });
+  } catch (error) {
+    console.error('Error fetching blocks:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 // POST - Create new block
 export async function POST(
   request: NextRequest,
